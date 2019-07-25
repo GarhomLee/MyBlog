@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">Blog</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <link rel="stylesheet" href="../static/css/typo.css" th:href="@{/css/typo.css}">
+    <link rel="stylesheet" href="../static/lib/prism/prism.css" th:href="@{/lib/prism/prism.css}">
+    <link rel="stylesheet" href="../static/lib/tocbot/tocbot.css" th:href="@{/lib/tocbot/tocbot.css}">
+    <link rel="stylesheet" href="../static/css/animate.css" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
+</head>
+<body>
+
+<!--navigation-->
+<nav th:fragment="menu(n)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container">
+        <div class="ui inverted secondary stackable menu">
+            <h2 class="ui olive header item">MyBlog</h2>
+            <a href="#" th:href="@{/}" class="m-item item m-mobile-hide" th:classappend="${n==1} ? 'active'"><i class="small home icon"></i>Home</a>
+            <a href="#" th:href="@{/categories/-1}" class="m-item item m-mobile-hide" th:classappend="${n==2} ? 'active'"><i class="small tags icon"></i>Categories</a>
+            <a href="#" th:href="@{/archives}" class="m-item item m-mobile-hide" th:classappend="${n==3} ? 'active'"><i class="small archive icon"></i>Archive</a>
+            <a href="#" th:href="@{/about}" class="m-item item m-mobile-hide" th:classappend="${n==4} ? 'active'"><i class="small info circle icon"></i>About Me</a>
+            <div class="right m-item item m-mobile-hide">
+                <form name="search-form" th:action="@{/search}" method="post" target="_blank">
+                    <div class="ui icon inverted tranparent input">
+                        <input type="text" name="query" placeholder="Search">
+                        <i onclick="document.forms['search-form'].submit()" class="search link icon"></i>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" class="ui menu toggle black icon button m-top-right m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+
+
+<!--footer-->
+<footer th:fragment="footer" class="ui inverted vertical segment m-padded-tb-massive">
+    <div class="ui center aligned container">
+        <div class="ui inverted divided stackable grid">
+
+            <div class="two wide column">
+                <img src="../static/images/cat.jpg" th:src="@{/images/cat.jpg}" class="ui rounded image" alt="" style="width: 150px">
+            </div>
+
+            <div class="six wide column">
+                <h4 class="ui inverted header m-opacity-mini">Latest Blogs</h4>
+                <div id="newblog-container">
+                    <div th:fragment="newBlogList" class="ui inverted link list">
+                        <a th:each="blog : ${page}" th:text="${blog.title}" th:href="@{/blogs/{id}(id=${blog.id})}" href="#" target="_blank" class="item">用户故事</a>
+                        <!--/*-->
+                        <a href="#" class="item">用户故事</a>
+                        <a href="#" class="item">用户故事</a>
+                        <!--*/-->
+                    </div>
+                </div>
+            </div>
+
+            <div class="three wide column">
+                <h4 class="ui inverted header m-opacity-mini">Contact Me</h4>
+                <div class="ui inverted link list">
+                    <a th:text="#{index.email}" href="mailto:garhomlee@gmail.com" target="_blank" class="item">Email: garhomlee@gmail.com</a>
+                    <a href="https://www.linkedin.com/in/jiahong-garhom-li" target="_blank" class="item">LinkedIn</a>
+                    <a href="#" class="item">WeChat</a>
+                </div>
+            </div>
+
+            <div class="five wide column">
+                <h4 class="ui inverted header m-opacity-mini">Quotes</h4>
+                <p name="quote-content" class="m-opacity-mini">All work and no play makes Jack a dull boy.</p>
+
+            </div>
+        </div>
+        <div class="ui inverted section divider"></div>
+        <p class="m-text-thin m-text-spaced m-opacity-mini">Copyright © 2019 By Jiahong (Garhom) Li</p>
+    </div>
+
+</footer>
+
+<th:block th:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+    <script src="../static/lib/prism/prism.js" th:src="@{/lib/prism/prism.js}"></script>
+    <script src="../static/lib/tocbot/tocbot.min.js" th:src="@{/lib/tocbot/tocbot.min.js}"></script>
+    <script src="../static/lib/qrcode/qrcode.min.js" th:src="@{/lib/qrcode/qrcode.min.js}"></script>
+
+    <script>
+        $('#newblog-container').load(/*[[@{/footer/newBlogs}]]*/"/footer/newBlogs");
+
+        function getQuote () {
+            var content;
+            $.getJSON("https://sslapi.hitokoto.cn/encode=json",function(json){
+                    content = json["hitokoto"];   //格言内容
+                    author = json["from"];       //格言作者
+            });
+            $("[name='quote-content']").val(content);
+        }
+
+
+    </script>
+</th:block>
+
+</body>
+</html>
